@@ -4,6 +4,11 @@ import os
 import secrets as _secrets
 from datetime import datetime, timezone, timedelta
 
+# passlib 1.7.4 + bcrypt >= 4.0.0 incompatibility fix
+import bcrypt as _bcrypt_mod
+if not hasattr(_bcrypt_mod, "__about__"):
+    _bcrypt_mod.__about__ = type("_about", (), {"__version__": _bcrypt_mod.__version__})()
+
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import HTTPException, status
