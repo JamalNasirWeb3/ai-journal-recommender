@@ -1,0 +1,30 @@
+# Data files (large / generated)
+*.parquet
+*.npz
+*.pkl
+*.csv
+*.db
+
+# Caches
+.openalex_cache.json
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Screenshots
+sc_*.png
+screenshot_*.png
+
+# Documents / PDFs
+*.pdf
+*.docx
+
+# IDE / tooling
+.claude/
+.env
+*.env
+
+# OS
+.DS_Store
+Thumbs.db
