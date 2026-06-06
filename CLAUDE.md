@@ -91,7 +91,7 @@ DOAJ CSV
   → nlp.py             (Sprint 4 ✓) → embeddings cache
   → app.py             (Sprint 5–6 ✓) → Streamlit unified app
   → api/               (Sprint 7 ✓) → FastAPI + JWT + SQLite
-  → deploy/            (Sprint 8)   → Render/Railway + automation
+  → render.yaml        (Sprint 8 ✓) → Render.com (journal-api + journal-app)
 ```
 
 ## Sprint Reference
@@ -146,9 +146,9 @@ FastAPI backend with JWT auth, SQLite persistence, and Streamlit integration.
 
 **Interactive API docs**: http://localhost:8000/docs
 
-### Sprint 8 — Deploy + automation (planned)
+### Sprint 8 — Deploy + automation (delivered)
 
-Deploy FastAPI + Streamlit to Render.com or Railway.app (free tier). Monthly automation script: auto-downloads new DOAJ CSV, re-runs pipeline, updates `journals_scored.parquet`. Full README documentation, monitoring.
+Deployed to Render.com via `render.yaml` (two web services). Monthly automation script, full README, and monitoring still pending.
 
 ### Future — Agentic AI Layer (planned)
 
@@ -162,6 +162,27 @@ Six agents: Research Agent, Journal Reputation Agent, Matching Agent, Risk Agent
 | `JWT_SECRET_KEY` | Production | Signs JWT tokens; ephemeral random key used if absent (tokens invalidated on restart) |
 | `ADMIN_EMAIL` | Optional | Seeds an internal admin user at API startup |
 | `ADMIN_PASSWORD` | With `ADMIN_EMAIL` | Password for seeded admin user |
+| `API_BASE_URL` | Production | FastAPI base URL used by `api_client.py`; defaults to `http://localhost:8000` |
+
+## Deployment (Render.com)
+
+`render.yaml` defines two services deployed from the same repo:
+
+| Service | Name | Start command |
+|---------|------|---------------|
+| FastAPI | `journal-api` | `uvicorn api.main:app --host 0.0.0.0 --port $PORT` |
+| Streamlit | `journal-app` | `streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true` |
+
+**Build command** (both services): installs CPU-only PyTorch first to avoid the full ~1 GB GPU wheel, then `requirements.txt`.
+```
+pip install torch --index-url https://download.pytorch.org/whl/cpu && pip install -r requirements.txt
+```
+
+**`API_BASE_URL`** is auto-wired in `render.yaml` from `journal-api`'s `RENDER_EXTERNAL_URL` — no manual step needed.
+
+**Pre-built artefacts** (`journals_scored.parquet`, `journal_embeddings.npz`, `tfidf_vectorizer.pkl`, `tfidf_matrix.npz`) are committed to the repo (48 MB total) so Render serves without re-running the pipeline.
+
+**Free-tier constraints**: 512 MB RAM per service (tight with NLP model loaded); services sleep after 15 min of inactivity; SQLite DB is ephemeral and resets on redeploy.
 
 ## Non-obvious Implementation Details
 
