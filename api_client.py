@@ -9,9 +9,10 @@ Usage:
 
 from __future__ import annotations
 from typing import Optional
+import os
 import requests
 
-DEFAULT_BASE = "http://localhost:8000"
+DEFAULT_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
 TIMEOUT = 60
 
 

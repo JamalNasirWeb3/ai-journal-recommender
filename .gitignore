@@ -1,9 +1,12 @@
-# Data files (large / generated)
-*.parquet
-*.npz
-*.pkl
-*.csv
+# Raw source data (large, not needed in repo)
+doaj_journalcsv_20260507_2321_utf8.csv
+"scimagojr 2025.csv"
+
+# SQLite database (ephemeral; regenerated at runtime)
 *.db
+
+# OpenAlex cache
+.openalex_cache.json
 
 # Caches
 .openalex_cache.json
