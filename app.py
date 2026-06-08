@@ -95,7 +95,7 @@ st.set_page_config(
     page_title="AI Powered Journal Recommender",
     page_icon="📚",
     layout="wide",
-    initial_sidebar_state="auto",
+    initial_sidebar_state="collapsed",
 )
 
 # ── Mobile-responsive CSS ────────────────────────────────────────────────────
