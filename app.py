@@ -95,8 +95,50 @@ st.set_page_config(
     page_title="AI Powered Journal Recommender",
     page_icon="📚",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
+
+# ── Mobile-responsive CSS ────────────────────────────────────────────────────
+st.markdown("""
+<style>
+/* Stack all column groups vertically on narrow screens */
+@media screen and (max-width: 768px) {
+    [data-testid="stHorizontalBlock"],
+    div.stHorizontalBlock {
+        flex-wrap: wrap !important;
+        gap: 0.75rem !important;
+    }
+    [data-testid="stHorizontalBlock"] > [data-testid="column"],
+    div.stHorizontalBlock > div.stColumn {
+        width: 100% !important;
+        flex: 0 0 100% !important;
+        min-width: 0 !important;
+    }
+    /* Reduce main-area padding so content isn't squeezed */
+    .main .block-container {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+        max-width: 100% !important;
+    }
+    /* Sidebar occupies most of the screen when opened on mobile */
+    section[data-testid="stSidebar"] {
+        min-width: 85vw !important;
+    }
+    /* Scale down headings */
+    h1 { font-size: 1.5rem !important; line-height: 1.3 !important; }
+    h2 { font-size: 1.25rem !important; }
+    /* Allow plotly charts to scroll horizontally if needed */
+    .stPlotlyChart > div { overflow-x: auto !important; }
+    /* Tighter padding inside bordered result cards */
+    [data-testid="stVerticalBlockBorderWrapper"] { padding: 0.5rem !important; }
+}
+@media screen and (max-width: 480px) {
+    h1 { font-size: 1.25rem !important; }
+    h2 { font-size: 1.1rem  !important; }
+    h3 { font-size: 1rem    !important; }
+}
+</style>
+""", unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
 # Sidebar — mode selector (always visible at top)
@@ -736,20 +778,25 @@ else:
 
     ai_note   = "<p><em>AI explanations powered by Claude (Anthropic)</em></p>" if any(explanations) else ""
     html_report = f"""<!DOCTYPE html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Powered Journal Recommender</title><style>
-body{{font-family:Arial,sans-serif;font-size:13px;margin:30px}}
-h1{{color:#2c3e50}}table{{border-collapse:collapse;width:100%}}
+body{{font-family:Arial,sans-serif;font-size:13px;margin:30px;max-width:100%}}
+h1{{color:#2c3e50;font-size:1.4rem}}
+.table-wrap{{overflow-x:auto;-webkit-overflow-scrolling:touch}}
+table{{border-collapse:collapse;width:100%;min-width:600px}}
 th,td{{border:1px solid #ddd;padding:8px;text-align:left;vertical-align:top}}
 th{{background:#2c3e50;color:white}}tr:nth-child(even){{background:#f9f9f9}}
-a{{color:#2980b9}}.meta{{color:#666;margin-bottom:20px}}</style></head><body>
+a{{color:#2980b9}}.meta{{color:#666;margin-bottom:20px;font-size:.9rem}}
+@media(max-width:600px){{body{{margin:12px;font-size:12px}}h1{{font-size:1.2rem}}}}
+</style></head><body>
 <h1>AI Powered Journal Recommender</h1>
 <div class="meta"><b>Article:</b> {title_input}<br>
 <b>Area:</b> {area_input or '—'}<br>
 <b>Priorities:</b> Speed {speed_w:.0%} · Prestige {prestige_w:.0%} · Cost {cost_w:.0%}</div>
-{ai_note}<table><thead><tr>
+{ai_note}<div class="table-wrap"><table><thead><tr>
 <th>#</th><th>Journal</th><th>Publisher</th><th>Country</th>
 <th>Quartile</th><th>APC</th><th>Weeks</th><th>Score</th><th>Match</th>
-</tr></thead><tbody>{rows_html}</tbody></table></body></html>"""
+</tr></thead><tbody>{rows_html}</tbody></table></div></body></html>"""
 
     ex1, ex2 = st.columns(2)
     with ex1:
